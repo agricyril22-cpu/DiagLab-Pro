@@ -1,8 +1,11 @@
 /* DiagLab Pro — application */
 (function(){
 "use strict";
-const PWA = !!window.DL_PWA;
-const VERSION = "2.0";
+const DESKTOP = !!(window.diaglab && window.diaglab.desktop);   // application Windows (.exe)
+const PWA = !!window.DL_PWA && !DESKTOP;                          // site installé ou installable
+const FULL = PWA || DESKTOP;                                       // impression, export, téléchargements
+const VERSION = "2.1.0";
+const RELEASES = "https://github.com/agricyril22-cpu/DiagLab-Pro/releases/latest";
 
 /* ---------- utilitaires ---------- */
 const store = {
@@ -47,7 +50,7 @@ async function doInstall(){
   if(installEvt){installEvt.prompt();const r=await installEvt.userChoice;installEvt=null;updateInstallBtn();if(r.outcome!=="accepted")toast("Installation annulée.");}
   else location.hash="installer";
 }
-if(PWA && "serviceWorker" in navigator){
+if(PWA && "serviceWorker" in navigator && location.protocol.startsWith("http")){
   const hadController=!!navigator.serviceWorker.controller; // faux à la première installation
   window.addEventListener("load",()=>{
     navigator.serviceWorker.register("sw.js").then(reg=>{
@@ -222,6 +225,17 @@ function sheetText(f){
   return L.join("\n");
 }
 
+function reportToDraft(j,d){
+  d=d||draft();
+  d.type=d.type||(j.Portable?"Ordinateur portable":"Ordinateur fixe");
+  d.modele=d.modele||[j.Fabricant,j.Modele].filter(Boolean).join(" ");
+  d.serie=d.serie||j.NumeroSerie||"";
+  const cs=(j.Constats||[]).filter(c=>c.Niveau==="critique"||c.Niveau==="attention");
+  const txt=`Rapport DiagLab du ${j.Date||""} — score ${j.Score}/100 (${j.Verdict})\n`+(cs.length?cs.map(c=>`- [${c.Niveau==="critique"?"Critique":"Attention"}] ${c.Message}`).join("\n"):"- Aucun problème détecté");
+  d.diagnostic=d.diagnostic?d.diagnostic+"\n\n"+txt:txt;
+  saveDraft(d); return d;
+}
+
 R.fiche = ()=>{
   const d=draft(), list=fiches(), a=atelier();
   const enCours=list.filter(f=>!["Rendu","Irréparable"].includes(f.statut)).length;
@@ -235,7 +249,7 @@ R.fiche = ()=>{
     return `<div class="field${WIDE.has(k)?" wide":""}"><label for="f_${k}">${l}${k==="montant"||k==="acompte"?" ("+esc(a.devise)+")":""}</label>${inp}${k==="serie"?'<span class="hint" id="serieHint"></span>':""}</div>`;
   };
   return `<div class="noprint"><div class="eyebrow">Atelier</div><h1>Fiches clients</h1>
-  <p class="lede">Créez la fiche au dépôt de l'appareil, suivez son statut, imprimez-la pour signature. Les fiches restent sur cet appareil${PWA?" ; exportez-les régulièrement pour les sauvegarder":""}.</p>
+  <p class="lede">Créez la fiche au dépôt de l'appareil, suivez son statut, imprimez-la pour signature. Les fiches restent sur cet appareil${FULL?" ; exportez-les régulièrement pour les sauvegarder":""}.</p>
   <div class="kpis"><div class="kpi"><b>${list.length}</b><span>fiches enregistrées</span></div><div class="kpi"><b>${enCours}</b><span>appareils en atelier</span></div><div class="kpi"><b>${prets}</b><span>prêts à rendre</span></div></div>
   <div class="card">
    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
@@ -245,7 +259,7 @@ R.fiche = ()=>{
    <div class="form">${FIELDS.map(field).join("")}</div>
    <div class="actions">
     <button class="btn" id="fSave">Enregistrer la fiche</button>
-    ${PWA?'<button class="btn ghost" id="fPrint">Imprimer / PDF</button>':""}
+    ${FULL?'<button class="btn ghost" id="fPrint">Imprimer / PDF</button>':""}
     <button class="btn ghost" id="fCopy">Copier le texte</button>
     <button class="btn ghost" id="fNew">Nouvelle fiche</button>
    </div>
@@ -257,7 +271,7 @@ R.fiche = ()=>{
   <input class="search" id="hq" type="search" placeholder="Rechercher un client, un modèle, un numéro de fiche…">
   <div class="card tw" style="padding:0" id="hist"></div>
   <div class="actions">
-   ${PWA?'<button class="btn ghost" id="exp">Exporter les fiches (.json)</button>':""}
+   ${FULL?'<button class="btn ghost" id="exp">Exporter les fiches (.json)</button>':""}
    <label class="btn ghost" style="cursor:pointer">Importer des fiches (.json)<input type="file" id="impFiches" accept=".json,application/json" hidden></label>
   </div>
   <details class="acc" style="margin-top:18px"><summary>Coordonnées de l'atelier et conditions</summary><div class="body"><div class="form">
@@ -304,14 +318,7 @@ AFTER.fiche = ()=>{
       try{
         const j=JSON.parse(String(r.result).replace(/^\uFEFF/,""));
         if(!j.Ordinateur && !j.Constats) throw new Error("format");
-        const d=read();
-        d.type=d.type||(j.Portable?"Ordinateur portable":"Ordinateur fixe");
-        d.modele=d.modele||[j.Fabricant,j.Modele].filter(Boolean).join(" ");
-        d.serie=d.serie||j.NumeroSerie||"";
-        const cs=(j.Constats||[]).filter(c=>c.Niveau==="critique"||c.Niveau==="attention");
-        const txt=`Rapport DiagLab du ${j.Date||""} — score ${j.Score}/100 (${j.Verdict})\n`+(cs.length?cs.map(c=>`- [${c.Niveau==="critique"?"Critique":"Attention"}] ${c.Message}`).join("\n"):"- Aucun problème détecté");
-        d.diagnostic=d.diagnostic?d.diagnostic+"\n\n"+txt:txt;
-        saveDraft(d); render(); toast("Rapport PC importé dans la fiche.");
+        reportToDraft(j,read()); render(); toast("Rapport PC importé dans la fiche.");
       }catch(err){toast("Ce fichier n'est pas un rapport DiagLab (.json produit par le script Rapport PC).")}
     };
     r.readAsText(file);
@@ -351,12 +358,13 @@ AFTER.fiche = ()=>{
 
 /* ================= Rapport PC ================= */
 R.rapport = ()=>`<div class="eyebrow">Diagnostic Windows en un clic</div><h1>Rapport PC</h1>
- <p class="lede">Un script à lancer sur le PC du client. En une à deux minutes, il analyse la machine et ouvre un rapport avec une note sur 100 et la liste des problèmes classés par gravité. Il ne modifie rien : lecture seule.</p>
+ <p class="lede">${DESKTOP?"Analysez ce PC en un clic : en une à deux minutes, vous obtenez une note sur 100 et la liste des problèmes classés par gravité. Pour un autre PC, utilisez le kit plus bas.":"Un script à lancer sur le PC du client. En une à deux minutes, il analyse la machine et ouvre un rapport avec une note sur 100 et la liste des problèmes classés par gravité. Il ne modifie rien : lecture seule."}</p>
+ ${DESKTOP?scanPanel():""}
  <div class="grid g3">
   ${[["Système","Modèle, numéro de série, BIOS, version de Windows, fin de support"],["Mémoire","Quantité, barrettes, saturation"],["Disques","Santé SMART, usure SSD, erreurs, espace libre, disque mécanique"],["Batterie","Capacité restante, cycles"],["Stabilité","Écrans bleus et leur code, coupures brutales, erreurs matérielles WHEA, erreurs disque (30 jours)"],["Pilotes","Périphériques en erreur, pilote graphique générique"],["Sécurité","Antivirus, pare-feu, Secure Boot, TPM, BitLocker"],["Windows","Activation, dernière mise à jour, redémarrage en attente"],["Réseau","IP, passerelle, DNS, vitesse du lien, ping box et internet"],["Températures","Zones thermiques ACPI (si la carte les expose)"]].map(x=>`<div class="card"><h3>${x[0]}</h3><p>${x[1]}</p></div>`).join("")}
  </div>
  <h2 class="sub">Utilisation</h2>
- ${PWA?`<div class="actions" style="margin:0 0 14px"><a class="btn" href="outils/DiagLab-Rapport.zip" download>Télécharger le kit (.zip)</a><a class="btn ghost" href="outils/DiagLab-Rapport.ps1" download>Script seul (.ps1)</a></div>`:`<div class="infobox">Le téléchargement du kit est disponible dans la version installée de DiagLab Pro. Ici, vous pouvez copier le script plus bas et l'enregistrer sous le nom <span class="mono">DiagLab-Rapport.ps1</span>.</div>`}
+ ${FULL?`<div class="actions" style="margin:0 0 14px"><a class="btn${DESKTOP?" ghost":""}" href="outils/DiagLab-Rapport.zip" download>Télécharger le kit pour un autre PC (.zip)</a><a class="btn ghost" href="outils/DiagLab-Rapport.ps1" download>Script seul (.ps1)</a></div>`:`<div class="infobox">Le téléchargement du kit est disponible dans la version installée de DiagLab Pro. Ici, vous pouvez copier le script plus bas et l'enregistrer sous le nom <span class="mono">DiagLab-Rapport.ps1</span>.</div>`}
  <details class="acc" open><summary>Étapes</summary><div class="body"><ol>
   <li>Copiez le kit sur votre clé USB technicien et décompressez-le sur le PC du client.</li>
   <li>Double-cliquez sur <span class="mono">Lancer-DiagLab.bat</span> et acceptez la demande d'administrateur. Sans droits administrateur, le rapport est produit mais sans SMART, températures, TPM ni BitLocker.</li>
@@ -370,7 +378,47 @@ R.rapport = ()=>`<div class="eyebrow">Diagnostic Windows en un clic</div><h1>Rap
   <p>Ajoutez <span class="mono">-Complet</span> pour vérifier aussi l'intégrité de Windows (SFC et DISM, plusieurs minutes), <span class="mono">-Dossier D:\\Rapports</span> pour changer le dossier de sortie, <span class="mono">-NePasOuvrir</span> pour ne pas ouvrir le rapport.</p>
  </div></details>
  <details class="acc"><summary>Voir le script</summary><div class="body"><div class="actions" style="margin:0 0 6px"><button class="mini" id="cpScript">Copier le script</button><span class="pill" id="scriptInfo">chargement…</span></div><pre class="script" id="scriptBox"></pre></div></details>`;
+let lastScan=null;
+function scanPanel(){
+  return `<div class="card scan" id="scanCard"><h3>Analyser ce PC</h3>
+   <p>Lance le diagnostic de cet ordinateur et affiche le résultat ici. Lecture seule : rien n'est modifié.</p>
+   <div class="opts"><label><input type="checkbox" id="scAdmin" checked> Avec droits administrateur (SMART, températures, TPM, BitLocker)</label>
+   <label><input type="checkbox" id="scFull"> Vérifier aussi l'intégrité de Windows (SFC et DISM, plusieurs minutes)</label></div>
+   <div class="actions"><button class="btn" id="scGo">Analyser ce PC maintenant</button><span class="pill" id="scState" hidden></span></div>
+   <div id="scResult">${lastScan?scanResult(lastScan):""}</div></div>`;
+}
+function scanResult(j){
+  const lib={critique:"Critique",attention:"Attention",info:"Info",ok:"OK"};
+  const cs=j.Constats||[];
+  const cls=cs.some(c=>c.Niveau==="critique")?"critique":cs.some(c=>c.Niveau==="attention")?"attention":"ok";
+  return `<div class="scorebox lvl-${cls}"><b>${esc(j.Score)}</b><div><div class="v">${esc(j.Verdict)}</div><div class="s">${esc([j.Fabricant,j.Modele].filter(Boolean).join(" "))} · ${esc(j.Systeme||"")} · ${esc(j.Date||"")}</div></div></div>
+   ${cs.length?`<div class="findings">${cs.map(c=>`<div class="finding"><span class="lvl lvl-${esc(c.Niveau)}">${lib[c.Niveau]||esc(c.Niveau)}</span><div><b>${esc(c.Domaine)}</b> · ${esc(c.Message)}${c.Conseil?`<div class="adv">${esc(c.Conseil)}</div>`:""}</div></div>`).join("")}</div>`:`<p>Aucun problème détecté.</p>`}
+   ${j.Admin?"":`<div class="warnbox">Analyse faite sans droits administrateur : SMART, températures, TPM et BitLocker n'ont pas été vérifiés.</div>`}
+   <div class="actions"><button class="btn" id="scOpen">Ouvrir le rapport complet</button><button class="btn ghost" id="scFiche">Créer une fiche avec ce résultat</button><button class="btn ghost" id="scSave">Enregistrer le rapport…</button></div>`;
+}
+function bindScan(){
+  const go=$("#scGo"); if(!go) return;
+  const bindResult=()=>{
+    if(!$("#scOpen")) return;
+    $("#scOpen").onclick=()=>window.diaglab.openReport().then(ok=>{if(!ok)toast("Le rapport n'est plus disponible : relancez l'analyse.")});
+    $("#scSave").onclick=()=>window.diaglab.saveReport().then(p=>{if(p)toast("Rapport enregistré.")});
+    $("#scFiche").onclick=()=>{reportToDraft(lastScan);location.hash="fiche";setTimeout(()=>toast("Résultat ajouté à la fiche en cours."),50)};
+  };
+  go.onclick=async()=>{
+    const st=$("#scState"); go.disabled=true; st.hidden=false;
+    const full=$("#scFull").checked;
+    st.textContent=full?"Analyse complète en cours (plusieurs minutes)…":"Analyse en cours (1 à 2 minutes)…";
+    $("#scResult").innerHTML="";
+    let r=null; try{ r=await window.diaglab.runReport({admin:$("#scAdmin").checked,complet:full}); }catch(e){ r={ok:false,error:String(e&&e.message||e)}; }
+    go.disabled=false; st.hidden=true;
+    if(!r||!r.ok){$("#scResult").innerHTML=`<div class="warnbox">${esc((r&&r.error)||"L'analyse a échoué.")}</div>`;return}
+    lastScan=r.data; $("#scResult").innerHTML=scanResult(lastScan); bindResult();
+    $("#scResult").scrollIntoView({behavior:"smooth",block:"start"});
+  };
+  bindResult();
+}
 AFTER.rapport = ()=>{
+  bindScan();
   $$("[data-copy]").forEach(b=>b.onclick=()=>copyText(b.previousElementSibling.textContent,b,b.previousElementSibling));
   let txt="";
   fetch("outils/DiagLab-Rapport.ps1").then(r=>{if(!r.ok)throw 0;return r.text()}).then(t=>{txt=t.replace(/^\uFEFF/,"");$("#scriptBox").textContent=txt;$("#scriptInfo").textContent=txt.split("\n").length+" lignes · PowerShell 5.1+"})
@@ -506,7 +554,8 @@ AFTER.check = ()=>{
 /* ================= Installer ================= */
 R.installer = ()=>{
   let top;
-  if(!PWA) top=`<div class="warnbox">Vous consultez une prévisualisation, qui ne peut pas s'installer. Ouvrez l'adresse où DiagLab Pro est hébergé (voir le fichier LISEZMOI du dossier <span class="mono">diaglab-pro</span>), puis suivez les étapes ci-dessous.</div>`;
+  if(DESKTOP) top=`<div class="infobox"><b>Vous utilisez DiagLab Pro pour Windows (version ${esc(window.diaglab.version||"")}).</b> Les nouvelles versions sont publiées sur <a href="${RELEASES}" target="_blank" rel="noopener">la page des versions</a> ; l'application vous prévient au démarrage.</div>`;
+  else if(!PWA) top=`<div class="warnbox">Vous consultez une prévisualisation, qui ne peut pas s'installer. Ouvrez l'adresse où DiagLab Pro est hébergé (voir le fichier LISEZMOI du dossier <span class="mono">diaglab-pro</span>), puis suivez les étapes ci-dessous.</div>`;
   else if(standalone()) top=`<div class="infobox"><b>DiagLab Pro est installé sur cet appareil.</b> Il fonctionne aussi hors connexion.</div>`;
   else if(installEvt) top=`<div class="actions" style="margin:0 0 18px"><button class="btn" id="instNow">Installer DiagLab Pro sur cet appareil</button></div>`;
   else if(isIOS) top=`<div class="infobox">Sur iPhone et iPad, l'installation se fait depuis le bouton Partager (voir ci-dessous).</div>`;
@@ -515,7 +564,8 @@ R.installer = ()=>{
   <p class="lede">DiagLab Pro s'installe comme une application : icône sur l'écran d'accueil ou le bureau, fenêtre dédiée, et fonctionnement hors connexion une fois installé.</p>
   ${top}
   <div class="grid g2">
-   <div class="card"><h3>Ordinateur (Windows, macOS, Linux)</h3><p>Avec Chrome ou Edge : cliquez sur l'icône d'installation à droite de la barre d'adresse, ou menu ⋮ → « Installer DiagLab Pro ». L'application apparaît dans le menu Démarrer ou le Launchpad. Sur Mac avec Safari 17+ : Fichier → « Ajouter au Dock ».</p></div>
+   <div class="card"><h3>Windows : application .exe</h3><p>Téléchargez <b>DiagLab-Pro-Setup</b> (installation avec raccourcis) ou <b>DiagLab-Pro-Portable</b> (sans installation, idéal sur clé USB). Elle ajoute le bouton « Analyser ce PC » dans Rapport PC.</p><p style="margin-top:10px"><a class="btn" href="${RELEASES}" target="_blank" rel="noopener">Télécharger pour Windows</a></p></div>
+   <div class="card"><h3>Ordinateur (Windows, macOS, Linux) depuis le navigateur</h3><p>Avec Chrome ou Edge : cliquez sur l'icône d'installation à droite de la barre d'adresse, ou menu ⋮ → « Installer DiagLab Pro ». L'application apparaît dans le menu Démarrer ou le Launchpad. Sur Mac avec Safari 17+ : Fichier → « Ajouter au Dock ».</p></div>
    <div class="card"><h3>Android (téléphone et tablette)</h3><p>Avec Chrome : bouton « Installer » quand il apparaît, ou menu ⋮ → « Installer l'application » / « Ajouter à l'écran d'accueil ». Fonctionne aussi avec Samsung Internet et Edge.</p></div>
    <div class="card"><h3>iPhone et iPad</h3><p>Ouvrez l'adresse dans Safari, touchez Partager (carré avec une flèche) → « Sur l'écran d'accueil » → Ajouter. Depuis iOS 16.4, Chrome et Edge le proposent aussi via Partager.</p></div>
    <div class="card"><h3>Hors connexion et mises à jour</h3><p>Après la première ouverture, toutes les fiches techniques, la FAQ et le kit Rapport PC restent disponibles sans internet. Quand une nouvelle version est publiée, un message propose de recharger.</p></div>
@@ -536,4 +586,12 @@ state.dev=store.get("dl-dev","pc"); if(!DIAG[state.dev]) state.dev="pc";
 window.addEventListener("hashchange",()=>{render();window.scrollTo(0,0)});
 updateInstallBtn();
 render();
+if(DESKTOP && navigator.onLine){
+  fetch("https://api.github.com/repos/agricyril22-cpu/DiagLab-Pro/releases/latest").then(r=>r.ok?r.json():null).then(j=>{
+    if(!j||!j.tag_name) return;
+    const n=v=>String(v).replace(/^v/,"").split(".").map(x=>parseInt(x,10)||0);
+    const a=n(j.tag_name), b=n(window.diaglab.version);
+    for(let i=0;i<3;i++){ if((a[i]||0)>(b[i]||0)){toast(`DiagLab Pro ${j.tag_name} est disponible.`,"Télécharger",()=>window.open(RELEASES,"_blank"));return} if((a[i]||0)<(b[i]||0))return }
+  }).catch(()=>{});
+}
 })();

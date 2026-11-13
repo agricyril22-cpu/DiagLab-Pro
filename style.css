@@ -125,6 +125,29 @@ input,select,textarea{font:inherit}
 .out{font-family:var(--f-mono);font-size:13px;background:var(--panel2);padding:10px;border-radius:7px;white-space:pre-wrap;word-break:break-word;margin-top:8px}
 pre.script{font-family:var(--f-mono);font-size:12px;background:var(--panel2);padding:12px;border-radius:8px;overflow:auto;max-height:420px;margin:8px 0 0;white-space:pre}
 
+/* Analyse du PC (version Windows) */
+.scan{margin-bottom:18px;border-color:var(--accent)}
+.scan .opts{display:flex;flex-direction:column;gap:6px;margin:12px 0 4px;font-size:14px}
+.scan .opts input{accent-color:var(--accent);margin-right:6px}
+.scorebox{display:flex;gap:16px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-top:16px}
+.scorebox b{font-family:var(--f-display);font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.scorebox .v{font-weight:600;font-size:17px}
+.scorebox .s{color:var(--muted);font-size:13px}
+.scorebox.lvl-critique b,.scorebox.lvl-critique .v{color:var(--crit)}
+.scorebox.lvl-attention b,.scorebox.lvl-attention .v{color:var(--warn)}
+.scorebox.lvl-ok b,.scorebox.lvl-ok .v{color:var(--ok)}
+.scorebox.lvl-critique,.scorebox.lvl-attention,.scorebox.lvl-ok{background:transparent}
+.findings{margin-top:12px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.finding{display:grid;grid-template-columns:86px 1fr;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px}
+.finding:last-child{border-bottom:0}
+.finding>div{min-width:0}
+.finding .adv{color:var(--muted);font-size:13px;margin-top:2px}
+.lvl{font-size:12px;font-weight:600;padding:3px 8px;border-radius:99px;text-align:center;align-self:start}
+.lvl.lvl-critique{background:var(--crit-bg);color:var(--crit)}
+.lvl.lvl-attention{background:var(--warn-bg);color:var(--warn)}
+.lvl.lvl-info{background:var(--info-bg);color:var(--info)}
+.lvl.lvl-ok{background:var(--ok-bg);color:var(--ok)}
+
 /* Formulaire de fiche */
 .form{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:12px 16px}
 .field{display:flex;flex-direction:column;gap:4px;min-width:0}

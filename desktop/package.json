@@ -1,0 +1,47 @@
+{
+  "name": "diaglab-pro",
+  "productName": "DiagLab Pro",
+  "version": "2.1.0",
+  "description": "Atelier de maintenance pour techniciens : diagnostic PC, Android, iPhone, réseau et imprimantes.",
+  "author": "agricyril22-cpu",
+  "homepage": "https://agricyril22-cpu.github.io/DiagLab-Pro/",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "copy-web": "node scripts/copy-web.js",
+    "start": "npm run copy-web && electron .",
+    "dist": "npm run copy-web && electron-builder --win --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.10.0",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "io.github.agricyril22cpu.diaglabpro",
+    "productName": "DiagLab Pro",
+    "copyright": "DiagLab Pro",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "preload.js", "package.json", "web/**/*"],
+    "extraResources": [{ "from": "web/outils", "to": "outils" }],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "DiagLab Pro",
+      "installerLanguages": ["fr_FR"],
+      "language": "1036",
+      "artifactName": "DiagLab-Pro-Setup-${version}.${ext}"
+    },
+    "portable": { "artifactName": "DiagLab-Pro-Portable-${version}.${ext}" }
+  }
+}

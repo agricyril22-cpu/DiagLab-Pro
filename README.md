@@ -34,6 +34,23 @@ Une fois ouverte une première fois, l'application fonctionne sans internet.
 
 Remplacez les fichiers sur l'hébergement, puis changez la valeur `VERSION` en haut de `sw.js` (par exemple `diaglab-2.0.1`). Les appareils installés affichent « Nouvelle version disponible » et proposent de recharger.
 
+## Version Windows (.exe)
+
+Téléchargez la dernière version sur https://github.com/agricyril22-cpu/DiagLab-Pro/releases/latest :
+
+- `DiagLab-Pro-Setup-x.y.z.exe` : installation avec raccourcis ;
+- `DiagLab-Pro-Portable-x.y.z.exe` : sans installation, pour clé USB.
+
+La version Windows ajoute le bouton **Analyser ce PC** (Rapport PC), qui lance le diagnostic et affiche le résultat dans l'application.
+
+### Publier une nouvelle version .exe
+
+1. Changez `version` dans `desktop/package.json` et `VERSION` dans `app.js` (même numéro, par exemple `2.2.0`).
+2. Créez et envoyez l'étiquette correspondante : `git tag v2.2.0` puis `git push origin v2.2.0`.
+3. GitHub compile les .exe sur un serveur Windows (environ 5 minutes) et les publie dans Releases.
+
+Pour tester sur un PC Windows avec Node.js : `cd desktop`, `npm install`, `npm start`.
+
 ## 4. Données
 
 Les fiches clients, la checklist et les réglages sont enregistrés **sur chaque appareil**. Pour transférer ou sauvegarder : Fiches clients → Exporter les fiches (.json), puis Importer sur l'autre appareil.
@@ -49,4 +66,6 @@ Les fiches clients, la checklist et les réglages sont enregistrés **sur chaque
 | `manifest.webmanifest` | Nom, icônes et raccourcis de l'application installée |
 | `sw.js` | Fonctionnement hors connexion |
 | `icons/` | Icônes et captures d'écran |
+| `desktop/` | Application Windows (Electron) : `main.js`, `preload.js`, configuration de compilation |
+| `.github/workflows/windows.yml` | Compilation automatique des .exe |
 | `outils/` | Kit Rapport PC : `DiagLab-Rapport.ps1`, `Lancer-DiagLab.bat`, `DiagLab-Rapport.zip` |
