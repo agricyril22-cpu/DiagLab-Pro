@@ -46,8 +46,8 @@ La version Windows ajoute le bouton **Analyser ce PC** (Rapport PC), qui lance l
 ### Publier une nouvelle version .exe
 
 1. Changez `version` dans `desktop/package.json` et `VERSION` dans `app.js` (même numéro, par exemple `2.2.0`).
-2. Créez et envoyez l'étiquette correspondante : `git tag v2.2.0` puis `git push origin v2.2.0`.
-3. GitHub compile les .exe sur un serveur Windows (environ 5 minutes) et les publie dans Releases.
+2. Sur GitHub, Releases → **Draft a new release** : étiquette `v2.2.0` (créée à la publication), titre `DiagLab Pro v2.2.0`, puis **Publish release**.
+3. GitHub compile les .exe sur un serveur Windows (environ 5 minutes) et les joint automatiquement à la version.
 
 Pour tester sur un PC Windows avec Node.js : `cd desktop`, `npm install`, `npm start`.
 
