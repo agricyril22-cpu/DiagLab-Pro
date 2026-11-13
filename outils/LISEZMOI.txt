@@ -1,0 +1,18 @@
+﻿DiagLab Pro - Kit Rapport PC
+============================
+
+1. Copiez ce dossier sur le PC à diagnostiquer (ou lancez-le depuis la clé USB).
+2. Double-cliquez sur Lancer-DiagLab.bat et acceptez la demande d'administrateur.
+3. Le rapport s'ouvre dans le navigateur. Deux fichiers sont créés sur le Bureau :
+   - DiagLab_NOMDUPC_date.html : le rapport à montrer au client ;
+   - DiagLab_NOMDUPC_date.json : à importer dans DiagLab Pro (Fiches clients).
+
+Options (PowerShell en administrateur, dans ce dossier) :
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\DiagLab-Rapport.ps1 -Complet
+  -Complet      vérifie aussi l'intégrité de Windows (SFC + DISM, plusieurs minutes)
+  -Dossier X    enregistre les rapports dans le dossier X
+  -NePasOuvrir  n'ouvre pas le rapport à la fin
+
+Le script est en lecture seule : il ne modifie rien sur le PC.
+Windows SmartScreen peut avertir car le script n'est pas signé :
+"Informations complémentaires" puis "Exécuter quand même".
