@@ -2,6 +2,15 @@
 
 Application de maintenance pour techniciens : diagnostic PC, Android, iPhone/iPad, réseau et imprimantes, fiches clients, rapport PC en un clic. Elle s'installe sur ordinateur, tablette et téléphone, et fonctionne hors connexion.
 
+## Fonctions
+
+- **Tableau de bord** : schéma de carte mère (téléphone et ordinateur) où les composants en panne s'allument.
+- **Diagnostic guidé** (PC, Android, iPhone, réseau, imprimantes) et **Diagnostic téléphone** toutes marques avec plan de réparation.
+- **Tests de l'appareil** : écran, tactile, son, micro, caméras, vibreur, capteurs, batterie, boutons, réseau, GPS.
+- **Rapport PC** : diagnostic Windows en un clic (bouton intégré dans la version .exe).
+- **Assistant IA** : base DiagLab hors connexion + Claude avec votre clé API Anthropic.
+- **Fiches clients**, checklist, FAQ, réinitialisations, **Systèmes & ISO** officiels avec vérification SHA-256, outils de boot, commandes, calculateurs.
+
 ## 1. Mettre l'application en ligne (une seule fois)
 
 Pour être installable, l'application doit être servie en **HTTPS**. Deux options gratuites :
@@ -60,7 +69,10 @@ Les fiches clients, la checklist et les réglages sont enregistrés **sur chaque
 | Fichier | Rôle |
 |---|---|
 | `index.html` | Page d'entrée de l'application |
-| `app.js` | Logique de l'application |
+| `app.js` | Navigation, fiches, Rapport PC et écrans de base |
+| `board.js`, `tests.js`, `phone.js`, `ia.js`, `iso.js` | Tableau de bord, tests matériels, diagnostic téléphone, assistant IA, ISO |
+| `data-plus.js` | Schémas de cartes, liens pannes → composants, liste des ISO officielles |
+| `vendor/` | SDK Anthropic (licence MIT) utilisé par l'assistant IA |
 | `data.js` | Base de connaissances : pannes, marques, réinitialisations, outils, FAQ. **C'est le fichier à enrichir.** |
 | `style.css` | Apparence (thèmes clair et sombre) |
 | `manifest.webmanifest` | Nom, icônes et raccourcis de l'application installée |

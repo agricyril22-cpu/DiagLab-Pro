@@ -3,14 +3,15 @@
 - **DiagLab-Pro-Setup-….exe** : installation classique, avec raccourcis sur le Bureau et dans le menu Démarrer.
 - **DiagLab-Pro-Portable-….exe** : sans installation, à lancer depuis une clé USB.
 
-## Premier lancement
+L'application n'est pas signée numériquement : si Windows affiche « Windows a protégé votre ordinateur », cliquez sur **Informations complémentaires** puis **Exécuter quand même**.
 
-L'application n'est pas signée numériquement : Windows SmartScreen peut afficher « Windows a protégé votre ordinateur ». Cliquez sur **Informations complémentaires** puis **Exécuter quand même**.
+## Nouveautés de la version 2.2
 
-## Nouveautés
-
-- Bouton **Analyser ce PC** dans Rapport PC : diagnostic Windows en un clic, résultat affiché dans l'application, création de fiche client en un clic.
-- Impression et export des fiches clients.
-- Vérification des nouvelles versions au démarrage.
+- **Flèches précédent / suivant** pour passer d'un écran à l'autre (aussi Alt + ← / → et les boutons latéraux de la souris).
+- **Tableau de bord** avec schéma de carte mère (téléphone et ordinateur) : les composants en panne s'allument selon les tests, les symptômes et le Rapport PC.
+- **Tests de l'appareil** : écran, tactile, haut-parleurs, micro, caméras, vibreur, capteurs, batterie et charge, boutons, réseau, GPS.
+- **Diagnostic téléphone** pour toutes les marques : identification, IMEI, symptômes multiples, plan de réparation classé, composants en cause.
+- **Assistant IA** : réponse immédiate de la base DiagLab, puis analyse par Claude (clé API Anthropic personnelle), photos acceptées.
+- **Systèmes & ISO** : pages officielles de Windows, Office, macOS, Linux, firmwares et pilotes, avec vérification SHA-256 des fichiers téléchargés.
 
 Version web installable (Android, iPhone, iPad, Mac) : https://agricyril22-cpu.github.io/DiagLab-Pro/

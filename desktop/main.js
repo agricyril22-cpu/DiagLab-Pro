@@ -30,6 +30,12 @@ function createWindow() {
     webPreferences: { preload: path.join(__dirname, "preload.js"), contextIsolation: true, sandbox: true, nodeIntegration: false }
   });
   win.loadURL("app://diaglab/index.html");
+  // Boutons « précédent / suivant » de la souris et des claviers multimédias.
+  win.on("app-command", (_e, cmd) => {
+    const h = win.webContents.navigationHistory;
+    if (cmd === "browser-backward" && h.canGoBack()) h.goBack();
+    if (cmd === "browser-forward" && h.canGoForward()) h.goForward();
+  });
   // Liens externes : navigateur par défaut ; jamais de navigation hors de l'application.
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (/^https?:\/\//.test(url)) shell.openExternal(url);
@@ -47,6 +53,9 @@ app.on("second-instance", () => { if (win) { if (win.isMinimized()) win.restore(
 
 app.whenReady().then(() => {
   Menu.setApplicationMenu(null);
+  const { session } = require("electron");
+  const allowed = new Set(["media", "clipboard-sanitized-write", "fullscreen", "geolocation"]);
+  session.defaultSession.setPermissionRequestHandler((wc, perm, cb, details) => cb(allowed.has(perm) && String(details.requestingUrl || "").startsWith("app://diaglab/")));
   protocol.handle("app", (req) => {
     let p = decodeURIComponent(new URL(req.url).pathname);
     if (p === "/" || p === "") p = "/index.html";

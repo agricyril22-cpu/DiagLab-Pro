@@ -4,7 +4,7 @@
 const DESKTOP = !!(window.diaglab && window.diaglab.desktop);   // application Windows (.exe)
 const PWA = !!window.DL_PWA && !DESKTOP;                          // site installé ou installable
 const FULL = PWA || DESKTOP;                                       // impression, export, téléchargements
-const VERSION = "2.1.0";
+const VERSION = "2.2.0";
 const RELEASES = "https://github.com/agricyril22-cpu/DiagLab-Pro/releases/latest";
 
 /* ---------- utilitaires ---------- */
@@ -48,7 +48,7 @@ function updateInstallBtn(){
 }
 async function doInstall(){
   if(installEvt){installEvt.prompt();const r=await installEvt.userChoice;installEvt=null;updateInstallBtn();if(r.outcome!=="accepted")toast("Installation annulée.");}
-  else location.hash="installer";
+  else go("installer");
 }
 if(PWA && "serviceWorker" in navigator && location.protocol.startsWith("http")){
   const hadController=!!navigator.serviceWorker.controller; // faux à la première installation
@@ -66,9 +66,13 @@ if(PWA && "serviceWorker" in navigator && location.protocol.startsWith("http")){
 
 /* ---------- structure ---------- */
 const VIEWS = [
- ["diag","Diagnostic"],["fiche","Fiches clients"],["rapport","Rapport PC"],["faq","Pannes & FAQ"],
- ["reset","Réinitialisation"],["boot","Outils de boot"],["outils","Logiciels"],["cmd","Commandes"],
- ["calc","Calculateurs"],["bios","BIOS & accès"],["check","Checklist"],["installer","Installer l'appli"]
+ ["dash","Tableau de bord","Atelier"],["fiche","Fiches clients","Atelier"],["check","Checklist","Atelier"],
+ ["diag","Diagnostic guidé","Diagnostic"],["phone","Diagnostic téléphone","Diagnostic"],["tests","Tests de l'appareil","Diagnostic"],
+ ["rapport","Rapport PC","Diagnostic"],["ia","Assistant IA","Diagnostic"],
+ ["faq","Pannes & FAQ","Ressources"],["reset","Réinitialisation","Ressources"],["iso","Systèmes & ISO","Ressources"],
+ ["boot","Outils de boot","Ressources"],["outils","Logiciels","Ressources"],["cmd","Commandes","Ressources"],
+ ["calc","Calculateurs","Ressources"],["bios","BIOS & accès","Ressources"],
+ ["installer","Installer l'appli","Application"]
 ];
 const ICON = `<svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0f151b"/><rect x="12" y="12" width="40" height="40" rx="6" fill="none" stroke="#2a3642" stroke-width="3"/><polyline points="6,34 20,34 25,22 32,46 38,28 42,34 58,34" fill="none" stroke="#3cc6cf" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 document.getElementById("root").innerHTML = `<div class="app">
@@ -84,21 +88,62 @@ document.getElementById("root").innerHTML = `<div class="app">
 </div>`;
 
 let state = {dev:"pc", sym:null, brand:null};
-const curView = ()=>{const v=(location.hash||"").slice(1);return VIEWS.some(x=>x[0]===v)?v:"diag"};
+const R={}, AFTER={};
+const known = v=>VIEWS.some(x=>x[0]===v) && !!R[v];
+const curView = ()=>{const v=(location.hash||"").slice(1);return known(v)?v:"dash"};
+
+/* ---------- historique : flèches précédent / suivant ---------- */
+let navIdx=0, navMax=0;
+try{const n=JSON.parse(sessionStorage.getItem("dl-nav")||"null"); if(n&&typeof n.max==="number") navMax=n.max}catch(e){}
+const saveNav=()=>{try{sessionStorage.setItem("dl-nav",JSON.stringify({max:navMax}))}catch(e){}};
+function go(v){
+  if(!known(v)) return;
+  if(v===curView()){window.scrollTo(0,0);return}
+  navIdx++; navMax=navIdx; saveNav();
+  history.pushState({dl:navIdx},"","#"+v);
+  render(); window.scrollTo(0,0);
+}
+window.addEventListener("popstate",e=>{
+  if(e.state && typeof e.state.dl==="number") navIdx=e.state.dl;
+  else { navIdx=navMax+1; navMax=navIdx; saveNav(); try{history.replaceState({dl:navIdx},"",location.hash)}catch(err){} }
+  render(); window.scrollTo(0,0);
+});
+document.addEventListener("click",e=>{
+  const a=e.target.closest && e.target.closest('a[href^="#"]');
+  if(!a) return; const v=a.getAttribute("href").slice(1);
+  if(known(v)){e.preventDefault();go(v)}
+});
+document.addEventListener("keydown",e=>{
+  if(!e.altKey || e.ctrlKey || e.metaKey) return;
+  if(e.key==="ArrowLeft"){e.preventDefault();history.back()}
+  if(e.key==="ArrowRight"){e.preventDefault();history.forward()}
+});
+const CHEV_L='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHEV_R='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function nav(){
-  const cur=curView();
-  $("#nav").innerHTML = VIEWS.map(([id,l])=>`<button data-v="${id}" aria-current="${id===cur}">${l}</button>`).join("");
-  $$("#nav button").forEach(b=>b.onclick=()=>{location.hash=b.dataset.v});
+  const cur=curView(); let g="", h="";
+  VIEWS.filter(x=>R[x[0]]).forEach(([id,l,grp])=>{
+    if(grp!==g){ h+=`<div class="navgroup">${esc(grp)}</div>`; g=grp; }
+    h+=`<button data-v="${id}" aria-current="${id===cur}">${l}</button>`;
+  });
+  $("#nav").innerHTML=h;
+  $$("#nav button").forEach(b=>b.onclick=()=>go(b.dataset.v));
   const a=$(`#nav button[data-v="${cur}"]`); if(a && a.scrollIntoView && window.innerWidth<=820) a.scrollIntoView({block:"nearest",inline:"center"});
 }
 function render(){
-  const v=curView();
+  const v=curView(), meta=VIEWS.find(x=>x[0]===v);
   nav();
-  $("#main").innerHTML = `<div class="view">${R[v]()}</div>`;
+  $("#main").innerHTML = `<div class="topbar noprint">
+    <button class="navbtn" id="navBack" aria-label="Écran précédent" title="Précédent (Alt + ←)" ${navIdx<=0?"disabled":""}>${CHEV_L}</button>
+    <button class="navbtn" id="navFwd" aria-label="Écran suivant" title="Suivant (Alt + →)" ${navIdx>=navMax?"disabled":""}>${CHEV_R}</button>
+    <span class="crumb">${esc(meta[2])} <span aria-hidden="true">›</span> <b>${esc(meta[1])}</b></span>
+  </div><div class="view">${R[v]()}</div>`;
+  const ns=$("nav.side"); if(ns) document.documentElement.style.setProperty("--navh",(window.innerWidth<=820?ns.offsetHeight:0)+"px");
+  $("#navBack").onclick=()=>history.back();
+  $("#navFwd").onclick=()=>history.forward();
   (AFTER[v]||(()=>{}))();
 }
-const R={}, AFTER={};
 
 /* ================= Diagnostic ================= */
 R.diag = ()=>{
@@ -138,12 +183,14 @@ R.diag = ()=>{
       <h4>${i+1}. ${esc(c[1])}</h4><p class="test"><b>Tester :</b> ${esc(c[2])}</p><p class="fix"><b>Réparer :</b> ${esc(c[3])}</p></div></div>`).join("")}
   </div>
   <div class="actions"><button class="btn" id="toFiche">Créer une fiche client avec ce diagnostic</button>
+  ${SYMPTOM_PARTS[state.dev+"|"+state.sym]?'<button class="btn ghost" id="toBoard">Voir sur la carte mère</button>':""}
   <span style="color:var(--muted);font-size:13.5px">Aucune cause ne correspond ? Voir <a href="#faq">Pannes &amp; FAQ</a> ou le <a href="#rapport">Rapport PC</a>.</span></div>`;
 };
 AFTER.diag = ()=>{
   $$("[data-dev]").forEach(b=>b.onclick=()=>{state.dev=b.dataset.dev;state.sym=null;store.set("dl-dev",state.dev);render()});
   $$("[data-sym]").forEach(b=>b.onclick=()=>{state.sym=b.dataset.sym;render()});
   $$("[data-brand]").forEach(b=>b.onclick=()=>{state.brand=state.brand===b.dataset.brand?null:b.dataset.brand;render()});
+  if($("#toBoard")) $("#toBoard").onclick=()=>{ if(window.DLBoard){DLBoard.applySymptoms(state.dev,[state.sym]); go("dash")} };
   $("#toFiche").onclick=()=>{
     const d=draft();
     const typeMap={pc:"Ordinateur portable",android:"Smartphone",iphone:"Smartphone",reseau:"Box / réseau",imprimante:"Imprimante"};
@@ -155,7 +202,7 @@ AFTER.diag = ()=>{
     const txt="Causes probables ("+state.sym+") :\n"+causes.slice(0,3).map((c,i)=>`${i+1}. ${c[1]}`).join("\n");
     d.diagnostic = d.diagnostic ? d.diagnostic+"\n\n"+txt : txt;
     saveDraft(d);
-    location.hash="fiche";
+    go("fiche");
     setTimeout(()=>toast("Diagnostic ajouté à la fiche en cours."),50);
   };
 };
@@ -318,7 +365,7 @@ AFTER.fiche = ()=>{
       try{
         const j=JSON.parse(String(r.result).replace(/^\uFEFF/,""));
         if(!j.Ordinateur && !j.Constats) throw new Error("format");
-        reportToDraft(j,read()); render(); toast("Rapport PC importé dans la fiche.");
+        reportToDraft(j,read()); if(window.DLBoard) DLBoard.applyScan(j); render(); toast("Rapport PC importé dans la fiche (et sur le tableau de bord).");
       }catch(err){toast("Ce fichier n'est pas un rapport DiagLab (.json produit par le script Rapport PC).")}
     };
     r.readAsText(file);
@@ -402,7 +449,7 @@ function bindScan(){
     if(!$("#scOpen")) return;
     $("#scOpen").onclick=()=>window.diaglab.openReport().then(ok=>{if(!ok)toast("Le rapport n'est plus disponible : relancez l'analyse.")});
     $("#scSave").onclick=()=>window.diaglab.saveReport().then(p=>{if(p)toast("Rapport enregistré.")});
-    $("#scFiche").onclick=()=>{reportToDraft(lastScan);location.hash="fiche";setTimeout(()=>toast("Résultat ajouté à la fiche en cours."),50)};
+    $("#scFiche").onclick=()=>{reportToDraft(lastScan);go("fiche");setTimeout(()=>toast("Résultat ajouté à la fiche en cours."),50)};
   };
   go.onclick=async()=>{
     const st=$("#scState"); go.disabled=true; st.hidden=false;
@@ -413,6 +460,7 @@ function bindScan(){
     go.disabled=false; st.hidden=true;
     if(!r||!r.ok){$("#scResult").innerHTML=`<div class="warnbox">${esc((r&&r.error)||"L'analyse a échoué.")}</div>`;return}
     lastScan=r.data; $("#scResult").innerHTML=scanResult(lastScan); bindResult();
+    if(window.DLBoard) DLBoard.applyScan(lastScan);
     $("#scResult").scrollIntoView({behavior:"smooth",block:"start"});
   };
   bindResult();
@@ -421,8 +469,8 @@ AFTER.rapport = ()=>{
   bindScan();
   $$("[data-copy]").forEach(b=>b.onclick=()=>copyText(b.previousElementSibling.textContent,b,b.previousElementSibling));
   let txt="";
-  fetch("outils/DiagLab-Rapport.ps1").then(r=>{if(!r.ok)throw 0;return r.text()}).then(t=>{txt=t.replace(/^\uFEFF/,"");$("#scriptBox").textContent=txt;$("#scriptInfo").textContent=txt.split("\n").length+" lignes · PowerShell 5.1+"})
-   .catch(()=>{$("#scriptInfo").textContent="script indisponible hors connexion";});
+  fetch("outils/DiagLab-Rapport.ps1").then(r=>{if(!r.ok)throw 0;return r.text()}).then(t=>{txt=t.replace(/^\uFEFF/,""); const box=$("#scriptBox"), inf=$("#scriptInfo"); if(!box||!inf) return; box.textContent=txt; inf.textContent=txt.split("\n").length+" lignes · PowerShell 5.1+"})
+   .catch(()=>{const inf=$("#scriptInfo"); if(inf) inf.textContent="script indisponible hors connexion";});
   $("#cpScript").onclick=e=>copyText(txt,e.currentTarget,$("#scriptBox"));
 };
 
@@ -583,9 +631,16 @@ $("#themeBtn").onclick=()=>{
 $("#installBtn").onclick=doInstall;
 const th=store.get("dl-theme",null); if(th) document.documentElement.dataset.theme=th;
 state.dev=store.get("dl-dev","pc"); if(!DIAG[state.dev]) state.dev="pc";
-window.addEventListener("hashchange",()=>{render();window.scrollTo(0,0)});
-updateInstallBtn();
-render();
+window.DL = {R, AFTER, VIEWS, $, $$, esc, store, toast, copyText, download, go, render, state,
+  DESKTOP, PWA, FULL, VERSION, draft, saveDraft, reportToDraft, luhnOk,
+  getLastScan:()=>lastScan, setLastScan:j=>{lastScan=j}};
+function boot(){
+  if(!history.state || typeof history.state.dl!=="number"){ try{history.replaceState({dl:0},"",location.hash||"#dash")}catch(e){} }
+  navIdx=(history.state&&history.state.dl)||0; if(navMax<navIdx) navMax=navIdx;
+  updateInstallBtn();
+  render();
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",boot); else boot();
 if(DESKTOP && navigator.onLine){
   fetch("https://api.github.com/repos/agricyril22-cpu/DiagLab-Pro/releases/latest").then(r=>r.ok?r.json():null).then(j=>{
     if(!j||!j.tag_name) return;
