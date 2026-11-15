@@ -1,0 +1,12 @@
+﻿Dossier PILOTES
+===============
+Copiez ici les pilotes à installer sans internet :
+- dossiers contenant des fichiers .inf (un sous-dossier par modèle de PC conseillé) ;
+- fichiers .cab du Catalogue Microsoft Update (ils sont décompressés automatiquement) ;
+- packs de pilotes Dell, HP ou Lenovo du modèle, décompressés.
+
+Utilisation :
+- Windows démarre : DiagLab\Pilotes\Lancer-Pilotes.bat, option 2.
+- Windows ne démarre pas (disque introuvable, pilote Intel RST/VMD) :
+  DiagLab\Reparation\DiagLab-Reparation.cmd, option 5.
+- Installation de Windows : « Charger un pilote » puis parcourir ce dossier.

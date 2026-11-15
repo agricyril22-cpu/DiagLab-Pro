@@ -1,7 +1,7 @@
 {
   "name": "diaglab-pro",
   "productName": "DiagLab Pro",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Atelier de maintenance pour techniciens : diagnostic PC, Android, iPhone, réseau et imprimantes.",
   "author": "agricyril22-cpu",
   "homepage": "https://agricyril22-cpu.github.io/DiagLab-Pro/",
@@ -22,7 +22,7 @@
     "productName": "DiagLab Pro",
     "copyright": "DiagLab Pro",
     "directories": { "output": "dist", "buildResources": "build" },
-    "files": ["main.js", "preload.js", "package.json", "web/**/*"],
+    "files": ["main.js", "preload.js", "tools.js", "package.json", "web/**/*"],
     "extraResources": [{ "from": "web/outils", "to": "outils" }],
     "win": {
       "icon": "build/icon.ico",

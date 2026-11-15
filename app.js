@@ -4,7 +4,7 @@
 const DESKTOP = !!(window.diaglab && window.diaglab.desktop);   // application Windows (.exe)
 const PWA = !!window.DL_PWA && !DESKTOP;                          // site installé ou installable
 const FULL = PWA || DESKTOP;                                       // impression, export, téléchargements
-const VERSION = "2.2.0";
+const VERSION = "2.3.0";
 const RELEASES = "https://github.com/agricyril22-cpu/DiagLab-Pro/releases/latest";
 
 /* ---------- utilitaires ---------- */
@@ -69,7 +69,8 @@ const VIEWS = [
  ["dash","Tableau de bord","Atelier"],["fiche","Fiches clients","Atelier"],["check","Checklist","Atelier"],
  ["diag","Diagnostic guidé","Diagnostic"],["phone","Diagnostic téléphone","Diagnostic"],["tests","Tests de l'appareil","Diagnostic"],
  ["rapport","Rapport PC","Diagnostic"],["ia","Assistant IA","Diagnostic"],
- ["faq","Pannes & FAQ","Ressources"],["reset","Réinitialisation","Ressources"],["iso","Systèmes & ISO","Ressources"],
+ ["rescue","Clé de secours","Outils PC"],["drivers","Pilotes","Outils PC"],
+ ["marques","Pannes par marque","Ressources"],["faq","Pannes & FAQ","Ressources"],["reset","Réinitialisation","Ressources"],["iso","Systèmes & ISO","Ressources"],
  ["boot","Outils de boot","Ressources"],["outils","Logiciels","Ressources"],["cmd","Commandes","Ressources"],
  ["calc","Calculateurs","Ressources"],["bios","BIOS & accès","Ressources"],
  ["installer","Installer l'appli","Application"]
@@ -411,7 +412,7 @@ R.rapport = ()=>`<div class="eyebrow">Diagnostic Windows en un clic</div><h1>Rap
   ${[["Système","Modèle, numéro de série, BIOS, version de Windows, fin de support"],["Mémoire","Quantité, barrettes, saturation"],["Disques","Santé SMART, usure SSD, erreurs, espace libre, disque mécanique"],["Batterie","Capacité restante, cycles"],["Stabilité","Écrans bleus et leur code, coupures brutales, erreurs matérielles WHEA, erreurs disque (30 jours)"],["Pilotes","Périphériques en erreur, pilote graphique générique"],["Sécurité","Antivirus, pare-feu, Secure Boot, TPM, BitLocker"],["Windows","Activation, dernière mise à jour, redémarrage en attente"],["Réseau","IP, passerelle, DNS, vitesse du lien, ping box et internet"],["Températures","Zones thermiques ACPI (si la carte les expose)"]].map(x=>`<div class="card"><h3>${x[0]}</h3><p>${x[1]}</p></div>`).join("")}
  </div>
  <h2 class="sub">Utilisation</h2>
- ${FULL?`<div class="actions" style="margin:0 0 14px"><a class="btn${DESKTOP?" ghost":""}" href="outils/DiagLab-Rapport.zip" download>Télécharger le kit pour un autre PC (.zip)</a><a class="btn ghost" href="outils/DiagLab-Rapport.ps1" download>Script seul (.ps1)</a></div>`:`<div class="infobox">Le téléchargement du kit est disponible dans la version installée de DiagLab Pro. Ici, vous pouvez copier le script plus bas et l'enregistrer sous le nom <span class="mono">DiagLab-Rapport.ps1</span>.</div>`}
+ ${FULL?`<div class="actions" style="margin:0 0 14px"><a class="btn${DESKTOP?" ghost":""}" href="outils/DiagLab-Rapport.zip" download>Télécharger le kit pour un autre PC (.zip)</a><a class="btn ghost" href="outils/DiagLab-Cle-Secours.zip" download>Trousse complète de la clé de secours</a><a class="btn ghost" href="outils/DiagLab-Rapport.ps1" download>Script seul (.ps1)</a></div>`:`<div class="infobox">Le téléchargement du kit est disponible dans la version installée de DiagLab Pro. Ici, vous pouvez copier le script plus bas et l'enregistrer sous le nom <span class="mono">DiagLab-Rapport.ps1</span>.</div>`}
  <details class="acc" open><summary>Étapes</summary><div class="body"><ol>
   <li>Copiez le kit sur votre clé USB technicien et décompressez-le sur le PC du client.</li>
   <li>Double-cliquez sur <span class="mono">Lancer-DiagLab.bat</span> et acceptez la demande d'administrateur. Sans droits administrateur, le rapport est produit mais sans SMART, températures, TPM ni BitLocker.</li>
@@ -507,6 +508,7 @@ AFTER.reset = ()=>{
 
 /* ================= Boot ================= */
 R.boot = ()=>`<div class="eyebrow">Clé de dépannage</div><h1>Outils de boot</h1>
+ <div class="infobox">Pour créer la clé de dépannage complète (Ventoy, Hiren's BootCD PE, menu de réparation, pilotes), utilisez la rubrique <a href="#rescue">Clé de secours</a>.</div>
  <p class="lede">Composez votre clé USB technicien. Méthode recommandée : une clé de 64 Go avec <b>Ventoy</b>, sur laquelle vous copiez les ISO Windows, Hiren's BootCD PE, MemTest86, Clonezilla et SystemRescue, plus le kit Rapport PC. Une seule clé pour tout.</p>
  <div class="grid g2">${BOOTTOOLS.map(t=>`<div class="card tool"><h3>${t[0]}</h3><div class="meta"><span class="pill">${t[1]}</span><span class="pill">${t[4]}</span></div><p>${esc(t[2])}</p><p style="margin-top:10px"><a href="${t[3]}" target="_blank" rel="noopener">Site officiel ↗</a></p></div>`).join("")}</div>
  <h2 class="sub">Rufus ou Ventoy ?</h2>

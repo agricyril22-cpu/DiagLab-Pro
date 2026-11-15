@@ -1,0 +1,24 @@
+﻿DiagLab Pro - Trousse de la clé de secours
+==========================================
+
+Cette clé démarre un ordinateur en panne (grâce à Ventoy) et contient les outils DiagLab.
+
+1. DÉMARRER UN PC SUR LA CLÉ
+   Brancher la clé, allumer le PC et appuyer sur la touche du menu de démarrage
+   (F12 Dell/Lenovo/Acer, F9 HP, Échap ou F8 ASUS, F11 MSI). Choisir la clé USB,
+   puis dans le menu Ventoy choisir Hiren's BootCD PE (ou une autre ISO).
+   Si le PC refuse de démarrer (Secure Boot) : voir la page Ventoy « Secure Boot »
+   ou désactiver temporairement Secure Boot dans le BIOS.
+
+2. RÉPARER WINDOWS (une fois démarré sur Hiren's BootCD PE ou la récupération Windows)
+   Ouvrir la clé et lancer DiagLab\Reparation\DiagLab-Reparation.cmd :
+   réparation du démarrage, SFC et DISM hors ligne, CHKDSK, injection de pilotes,
+   sauvegarde des documents vers la clé.
+
+3. DIAGNOSTIQUER UN PC QUI DÉMARRE
+   DiagLab\Rapport-PC\Lancer-DiagLab.bat : rapport complet noté sur 100.
+
+4. INSTALLER LES PILOTES SANS INTERNET
+   Mettre les pilotes (.inf ou .cab) dans le dossier PILOTES à la racine de la clé,
+   puis lancer DiagLab\Pilotes\Lancer-Pilotes.bat sur le PC à équiper.
+   L'option 3 sauvegarde les pilotes d'un PC qui fonctionne, pour un PC identique.

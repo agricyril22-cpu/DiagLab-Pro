@@ -5,7 +5,14 @@
 
 L'application n'est pas signée numériquement : si Windows affiche « Windows a protégé votre ordinateur », cliquez sur **Informations complémentaires** puis **Exécuter quand même**.
 
-## Nouveautés de la version 2.2
+## Nouveautés de la version 2.3
+
+- **Clé de secours** : DiagLab installe Ventoy sur une clé USB (téléchargement officiel vérifié par SHA-256), y copie Hiren's BootCD PE et vos ISO, puis la trousse DiagLab. Le **menu de réparation** démarre depuis la clé : réparation du démarrage, SFC et DISM hors ligne, CHKDSK, injection de pilotes, sauvegarde des documents.
+- **Pilotes** : analyse des périphériques sans pilote, identification par ID matériel, recherche dans le Catalogue Microsoft, installation **hors connexion** depuis un dossier ou des fichiers .inf / .cab, sauvegarde des pilotes d'un PC pour un PC identique. Outil Pilotes autonome sur la clé.
+- **Pannes par marque** : HP, Dell, Lenovo, ASUS, Acer, MSI, Mac, Surface, Samsung, iPhone, Xiaomi, Huawei, Oppo/OnePlus, Tecno/Infinix, Pixel, Motorola, avec l'outil de diagnostic du constructeur.
+- 14 symptômes fréquents de plus dans le diagnostic guidé.
+
+## Version 2.2
 
 - **Flèches précédent / suivant** pour passer d'un écran à l'autre (aussi Alt + ← / → et les boutons latéraux de la souris).
 - **Tableau de bord** avec schéma de carte mère (téléphone et ordinateur) : les composants en panne s'allument selon les tests, les symptômes et le Rapport PC.

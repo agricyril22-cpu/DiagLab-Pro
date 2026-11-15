@@ -6,6 +6,7 @@ const { spawn } = require("child_process");
 const { pathToFileURL } = require("url");
 
 const WEB = path.join(__dirname, "web");
+const OUTILS = app.isPackaged ? path.join(process.resourcesPath, "outils") : path.join(WEB, "outils");
 const SCRIPT = app.isPackaged
   ? path.join(process.resourcesPath, "outils", "DiagLab-Rapport.ps1")
   : path.join(WEB, "outils", "DiagLab-Rapport.ps1");
@@ -68,6 +69,7 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => app.quit());
 
 ipcMain.on("app:version", (e) => { e.returnValue = app.getVersion(); });
+require("./tools")({ app, ipcMain, dialog, shell, net, getWin: () => win, OUTILS });
 
 function run(cmd, args) {
   return new Promise((resolve) => {

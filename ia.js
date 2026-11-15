@@ -34,6 +34,7 @@ function buildIndex(){
     INDEX.push({kind:"Diagnostic · "+devName[dev], title:c[1], ctx:sym, body:`Tester : ${c[2]}\nRéparer : ${c[3]}`, text:words(dev+" "+devName[dev]+" "+sym+" "+sym+" "+c[1]+" "+c[2]+" "+c[3]), link:"diag"}))));
   FAQ.forEach(f=>INDEX.push({kind:"FAQ · "+f[0], title:f[1], ctx:"", body:f[2], text:words(f[0]+" "+f[1]+" "+f[1]+" "+f[2]), link:"faq"}));
   ["phone","pc"].forEach(k=>BOARDS[k].parts.forEach(p=>INDEX.push({kind:"Composant · "+(k==="phone"?"téléphone":"ordinateur"), title:p[1].replace(/\n/g," "), ctx:p[7], body:`Tester : ${p[8]}\nRéparer : ${p[9]}`, text:words(p[1]+" "+p[6]+" "+p[7]+" "+p[8]), link:"dash"})));
+  if(typeof BRAND_FAULTS!=="undefined") ["pc","phone"].forEach(k=>Object.entries(BRAND_FAULTS[k]).forEach(([bn,b])=>b.faults.forEach(f=>INDEX.push({kind:"Marque · "+bn, title:f[0], ctx:f[1], body:`Cause : ${f[2]}\nSolution : ${f[3]}`, text:words(bn+" "+bn+" "+b.models+" "+f.join(" ")), link:"marques"}))));
   RESETS.forEach(r=>INDEX.push({kind:"Réinitialisation", title:r[0], ctx:r[1], body:r[2].join("\n"), text:words("reinitialiser reset usine formater "+r[0]+" "+r[2].join(" ")), link:"reset"}));
 }
 function localSearch(q){
