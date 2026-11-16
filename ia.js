@@ -35,6 +35,8 @@ function buildIndex(){
   FAQ.forEach(f=>INDEX.push({kind:"FAQ · "+f[0], title:f[1], ctx:"", body:f[2], text:words(f[0]+" "+f[1]+" "+f[1]+" "+f[2]), link:"faq"}));
   ["phone","pc"].forEach(k=>BOARDS[k].parts.forEach(p=>INDEX.push({kind:"Composant · "+(k==="phone"?"téléphone":"ordinateur"), title:p[1].replace(/\n/g," "), ctx:p[7], body:`Tester : ${p[8]}\nRéparer : ${p[9]}`, text:words(p[1]+" "+p[6]+" "+p[7]+" "+p[8]), link:"dash"})));
   if(typeof BRAND_FAULTS!=="undefined") ["pc","phone"].forEach(k=>Object.entries(BRAND_FAULTS[k]).forEach(([bn,b])=>b.faults.forEach(f=>INDEX.push({kind:"Marque · "+bn, title:f[0], ctx:f[1], body:`Cause : ${f[2]}\nSolution : ${f[3]}`, text:words(bn+" "+bn+" "+b.models+" "+f.join(" ")), link:"marques"}))));
+  if(typeof ACADEMY!=="undefined") ACADEMY.forEach(t=>t.modules.forEach(m=>{ const txt=m.body.filter(b=>["p","tip","warn","ul","ol"].includes(b[0])).map(b=>Array.isArray(b[1])?b[1].join(" "):b[1]).join(" ").replace(/\*\*/g,"");
+    if(txt) INDEX.push({kind:"Cours · "+t.title, title:m.title, ctx:"Académie", body:txt.slice(0,320)+(txt.length>320?"…":""), text:words(m.title+" "+m.title+" "+txt), link:"academie"}); }));
   RESETS.forEach(r=>INDEX.push({kind:"Réinitialisation", title:r[0], ctx:r[1], body:r[2].join("\n"), text:words("reinitialiser reset usine formater "+r[0]+" "+r[2].join(" ")), link:"reset"}));
 }
 function localSearch(q){

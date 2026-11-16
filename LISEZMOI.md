@@ -9,6 +9,7 @@ Application de maintenance pour techniciens : diagnostic PC, Android, iPhone/iPa
 - **Tests de l'appareil** : écran, tactile, son, micro, caméras, vibreur, capteurs, batterie, boutons, réseau, GPS.
 - **Rapport PC** : diagnostic Windows en un clic (bouton intégré dans la version .exe).
 - **Assistant IA** : base DiagLab hors connexion + Claude avec votre clé API Anthropic.
+- **Académie** : 7 parcours (informatique, électronique, réseaux, CCNA 200-301, téléphones, imprimantes, NFC, IA), illustrations interactives, quiz, examen blanc CCNA, attestations.
 - **Clé de secours** (Ventoy + Hiren's BootCD PE + menu de réparation) et **Pilotes** hors connexion (version .exe ; trousse autonome pour la clé).
 - **Pannes par marque** : ordinateurs et téléphones, avec les outils de diagnostic des constructeurs.
 - **Fiches clients**, checklist, FAQ, réinitialisations, **Systèmes & ISO** officiels avec vérification SHA-256, outils de boot, commandes, calculateurs.
@@ -85,4 +86,5 @@ Les fiches clients, la checklist et les réglages sont enregistrés **sur chaque
 | `rescue.js`, `drivers.js`, `brands.js`, `data-faults.js` | Clé de secours, pilotes, pannes par marque |
 | `desktop/tools.js` | Version Windows : Ventoy, copie sur clé, installation de pilotes |
 | `outils/cle/` | Trousse copiée sur la clé : réparation, Rapport PC, pilotes, dossier PILOTES |
+| `academy*.js` | Académie : moteur, contenus des cours, illustrations |
 | `outils/` | Kit Rapport PC : `DiagLab-Rapport.ps1`, `Lancer-DiagLab.bat`, `DiagLab-Rapport.zip` |

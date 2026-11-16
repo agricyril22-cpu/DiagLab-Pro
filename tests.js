@@ -18,6 +18,7 @@ const TESTS = [
  ["batterie","Batterie et charge","Niveau et détection du chargeur.",["battery","port","chargeic"],["battery","psu"]],
  ["boutons","Boutons et clavier","Chaque touche détectée s'affiche.",["buttons"],["keyboard"]],
  ["reseau","Réseau et internet","Connexion, latence, débit.",["wifi"],["lan"]],
+ ["nfc","NFC","Lecture d'un tag ou d'une carte sans contact.",["nfc"],[]],
  ["gps","Localisation (GPS)","Position et précision.",["wifi"],[]]
 ];
 const T = id=>TESTS.find(t=>t[0]===id);
@@ -262,6 +263,25 @@ RUN.reseau = async el=>{
     const s=(performance.now()-t0)/1000, mbps=n*8/s/1e6; const d=$("#dl"); if(d) d.textContent=mbps.toFixed(1)+" Mb/s";
     setNote(`Latence ${times.length?Math.round(times[Math.floor(times.length/2)])+" ms":"?"}, débit ${mbps.toFixed(1)} Mb/s`);
   }catch(e){ const d=$("#dl"); if(d) d.textContent="non mesurable depuis ce navigateur"; setNote(times.length?"Connexion active, débit non mesuré":"Pas de réponse des serveurs de test"); }
+};
+
+RUN.nfc = el=>{
+  if(!("NDEFReader" in window)){
+    el.innerHTML=`<div class="infobox">Ce navigateur ne donne pas accès au NFC. Le test automatique fonctionne avec <b>Chrome sur Android</b>. Sur iPhone : tester un paiement Apple Pay ou la lecture d'un tag avec l'app Raccourcis. Vérifiez aussi que le NFC est activé dans les paramètres.</div>`;
+    setNote("Test NFC non disponible dans ce navigateur"); return;
+  }
+  el.innerHTML=`<p>Activez le NFC du téléphone, retirez la coque, puis approchez un tag ou une carte sans contact du dos de l'appareil (zone de l'antenne, souvent au centre ou en haut).</p><div class="actions"><button class="btn ghost" id="nfcGo">Démarrer la lecture</button></div><dl class="kv" id="nfcOut"><dt>État</dt><dd>en attente</dd></dl>`;
+  const ctl=new AbortController(); cleanup.push(()=>ctl.abort());
+  $("#nfcGo").onclick=async()=>{
+    const o=$("#nfcOut");
+    try{
+      const r=new NDEFReader(); await r.scan({signal:ctl.signal});
+      o.innerHTML=`<dt>État</dt><dd>lecture active : approchez le tag</dd>`;
+      r.onreadingerror=()=>{ const x=$("#nfcOut"); if(x) x.innerHTML=`<dt>État</dt><dd>tag détecté mais illisible (format non NDEF : carte bancaire ou badge chiffré). Le NFC fonctionne.</dd>`; setNote("Tag détecté (format non lisible) : antenne fonctionnelle"); };
+      r.onreading=e=>{ const x=$("#nfcOut"); if(!x) return; const recs=[...e.message.records].map(rc=>{ try{ return rc.recordType+(rc.data?" : "+new TextDecoder(rc.encoding||"utf-8").decode(rc.data).slice(0,60):""); }catch(err){ return rc.recordType; } });
+        x.innerHTML=`<dt>Numéro du tag</dt><dd class="mono">${esc(e.serialNumber||"non communiqué")}</dd><dt>Contenu</dt><dd>${recs.length?recs.map(esc).join("<br>"):"vide"}</dd>`; setNote("Tag lu : NFC fonctionnel"); toast("Tag NFC lu."); };
+    }catch(err){ o.innerHTML=`<dt>État</dt><dd>${esc(err.name==="NotAllowedError"?"autorisation NFC refusée":err.name==="NotSupportedError"?"NFC absent ou désactivé sur cet appareil":err.message)}</dd>`; setNote("NFC : "+(err.name==="NotSupportedError"?"absent ou désactivé":"erreur")); }
+  };
 };
 
 RUN.gps = el=>{

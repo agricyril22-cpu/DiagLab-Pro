@@ -4,7 +4,7 @@
 const DESKTOP = !!(window.diaglab && window.diaglab.desktop);   // application Windows (.exe)
 const PWA = !!window.DL_PWA && !DESKTOP;                          // site installé ou installable
 const FULL = PWA || DESKTOP;                                       // impression, export, téléchargements
-const VERSION = "2.3.0";
+const VERSION = "2.4.0";
 const RELEASES = "https://github.com/agricyril22-cpu/DiagLab-Pro/releases/latest";
 
 /* ---------- utilitaires ---------- */
@@ -69,6 +69,7 @@ const VIEWS = [
  ["dash","Tableau de bord","Atelier"],["fiche","Fiches clients","Atelier"],["check","Checklist","Atelier"],
  ["diag","Diagnostic guidé","Diagnostic"],["phone","Diagnostic téléphone","Diagnostic"],["tests","Tests de l'appareil","Diagnostic"],
  ["rapport","Rapport PC","Diagnostic"],["ia","Assistant IA","Diagnostic"],
+ ["academie","Académie","Formation"],["cours","Cours","Formation",1],
  ["rescue","Clé de secours","Outils PC"],["drivers","Pilotes","Outils PC"],
  ["marques","Pannes par marque","Ressources"],["faq","Pannes & FAQ","Ressources"],["reset","Réinitialisation","Ressources"],["iso","Systèmes & ISO","Ressources"],
  ["boot","Outils de boot","Ressources"],["outils","Logiciels","Ressources"],["cmd","Commandes","Ressources"],
@@ -97,9 +98,9 @@ const curView = ()=>{const v=(location.hash||"").slice(1);return known(v)?v:"das
 let navIdx=0, navMax=0;
 try{const n=JSON.parse(sessionStorage.getItem("dl-nav")||"null"); if(n&&typeof n.max==="number") navMax=n.max}catch(e){}
 const saveNav=()=>{try{sessionStorage.setItem("dl-nav",JSON.stringify({max:navMax}))}catch(e){}};
-function go(v){
+function go(v, force){
   if(!known(v)) return;
-  if(v===curView()){window.scrollTo(0,0);return}
+  if(v===curView() && !force){window.scrollTo(0,0);return}
   navIdx++; navMax=navIdx; saveNav();
   history.pushState({dl:navIdx},"","#"+v);
   render(); window.scrollTo(0,0);
@@ -124,13 +125,13 @@ const CHEV_R='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"
 
 function nav(){
   const cur=curView(); let g="", h="";
-  VIEWS.filter(x=>R[x[0]]).forEach(([id,l,grp])=>{
+  VIEWS.filter(x=>R[x[0]] && !x[3]).forEach(([id,l,grp])=>{
     if(grp!==g){ h+=`<div class="navgroup">${esc(grp)}</div>`; g=grp; }
     h+=`<button data-v="${id}" aria-current="${id===cur}">${l}</button>`;
   });
   $("#nav").innerHTML=h;
   $$("#nav button").forEach(b=>b.onclick=()=>go(b.dataset.v));
-  const a=$(`#nav button[data-v="${cur}"]`); if(a && a.scrollIntoView && window.innerWidth<=820) a.scrollIntoView({block:"nearest",inline:"center"});
+  const a=$(`#nav button[data-v="${cur==="cours"?"academie":cur}"]`); if(cur==="cours" && a) a.setAttribute("aria-current","true"); if(a && a.scrollIntoView && window.innerWidth<=820) a.scrollIntoView({block:"nearest",inline:"center"});
 }
 function render(){
   const v=curView(), meta=VIEWS.find(x=>x[0]===v);
