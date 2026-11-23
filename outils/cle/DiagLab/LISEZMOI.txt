@@ -18,7 +18,11 @@ Cette clé démarre un ordinateur en panne (grâce à Ventoy) et contient les ou
 3. DIAGNOSTIQUER UN PC QUI DÉMARRE
    DiagLab\Rapport-PC\Lancer-DiagLab.bat : rapport complet noté sur 100.
 
-4. INSTALLER LES PILOTES SANS INTERNET
+4. DISQUES INTERNES ET EXTERNES
+   DiagLab\Disques\Lancer-Disques.bat : santé et SMART, test de surface (lecture seule),
+   CHKDSK, remise en ligne, lettre de lecteur, vitesse.
+
+5. INSTALLER LES PILOTES SANS INTERNET
    Mettre les pilotes (.inf ou .cab) dans le dossier PILOTES à la racine de la clé,
    puis lancer DiagLab\Pilotes\Lancer-Pilotes.bat sur le PC à équiper.
    L'option 3 sauvegarde les pilotes d'un PC qui fonctionne, pour un PC identique.

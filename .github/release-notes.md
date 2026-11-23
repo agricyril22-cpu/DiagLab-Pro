@@ -5,7 +5,16 @@
 
 L'application n'est pas signée numériquement : si Windows affiche « Windows a protégé votre ordinateur », cliquez sur **Informations complémentaires** puis **Exécuter quand même**.
 
-## Nouveautés de la version 2.4 : Académie DiagLab
+## Nouveautés de la version 2.5 : disques internes et externes
+
+- Nouvel écran **Outils PC → Disques** pour les disques durs, SSD, clés USB et cartes SD, branchés en interne ou en **externe (USB)**.
+- **Analyse** : santé Windows, **SMART complet** (secteurs réalloués, instables, erreurs CRC, usure SSD, température, heures) via smartmontools s'il est installé, volumes et espace libre, avec un verdict et des conseils.
+- **Tests** : test de surface **rapide ou complet** en lecture seule (zones lentes, erreurs de lecture), suivi en direct et annulable ; **mesure de vitesse** (lecture, écriture, aléatoire).
+- **Réparation** : CHKDSK (vérification ou réparation, avec avertissement si le disque se dégrade), **mise en ligne** d'un disque hors ligne, retrait de la **lecture seule**, **attribution d'une lettre**, **formatage** (exFAT, NTFS, FAT32, confirmation EFFACER), **éjection**, **copie des données** d'un disque qui faiblit.
+- Protections : aucune réparation ni formatage possibles sur le disque système.
+- Guide de dépannage (disque externe non reconnu, clics, disque RAW, boîtiers chiffrés), tableau SMART, outils spécialisés, nouveau module de l'Académie et outil Disques dans la trousse de la clé de secours.
+
+## Version 2.4 : Académie DiagLab
 
 - **7 parcours, 30 modules** : maintenance informatique (architecture, électronique et composants, démarrage UEFI, méthode pour détecter n'importe quelle panne, sécurité, nouvelles technologies Intel / AMD / NVIDIA 2025–2026), réseaux, **préparation Cisco CCNA 200-301** (6 domaines, commandes IOS), téléphones, imprimantes, **NFC**, **intelligence artificielle**.
 - **18 illustrations interactives** des composants (résistances, condensateurs, MOSFET, VRM, DDR5, SSD M.2, sockets, connecteurs d'alimentation, RJ45, OSI, VLAN, laser, NFC…) : touchez une zone pour son explication.

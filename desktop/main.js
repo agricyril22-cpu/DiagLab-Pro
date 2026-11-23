@@ -70,6 +70,7 @@ app.on("window-all-closed", () => app.quit());
 
 ipcMain.on("app:version", (e) => { e.returnValue = app.getVersion(); });
 require("./tools")({ app, ipcMain, dialog, shell, net, getWin: () => win, OUTILS });
+require("./disks")({ app, ipcMain, dialog, shell, getWin: () => win, OUTILS });
 
 function run(cmd, args) {
   return new Promise((resolve) => {

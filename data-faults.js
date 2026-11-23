@@ -24,6 +24,11 @@ Object.assign(DIAG.pc, {
   ["h","Programmes et extensions indésirables","Barre d'outils, page d'accueil modifiée, publicités dans le navigateur.","Désinstaller les programmes récents inconnus, réinitialiser le navigateur, scanner avec Malwarebytes et AdwCleaner."],
   ["m","Logiciel malveillant actif","Antivirus désactivé, processus inconnus gourmands.","Analyse hors ligne Microsoft Defender, ESET Online Scanner ; changer les mots de passe depuis un autre appareil."],
   ["l","Infection profonde (rootkit, rançongiciel)","Fichiers chiffrés, réinfection après nettoyage.","Sauvegarder les données saines, réinstaller Windows proprement ; signaler le rançongiciel (cybermalveillance.gouv.fr en France)."]],
+ "Disque dur externe non reconnu":[
+  ["h","Câble ou alimentation insuffisante","Le disque ne tourne pas ou s'arrête ; câble de charge seule ; port USB en façade.","Câble de données neuf, port USB 3 à l'arrière, câble en Y ou hub alimenté pour un 2,5 pouces, bloc secteur pour un 3,5 pouces."],
+  ["m","Disque hors ligne, sans lettre ou non initialisé","Visible dans la Gestion des disques mais pas dans l'Explorateur.","Outils PC → Disques : mettre en ligne ou attribuer une lettre. Non initialisé avec des données : NE PAS initialiser, utiliser TestDisk."],
+  ["m","Pont USB du boîtier en panne","Le disque fonctionne branché en SATA direct.","Changer de boîtier (attention aux disques chiffrés par leur boîtier, WD notamment)."],
+  ["l","Disque en panne mécanique","Clics, bips, grincements, SMART en échec.","Débrancher, ne rien lancer : laboratoire de récupération si les données comptent."]],
  "Ventilateur très bruyant":[
   ["h","Poussière","Bruit qui monte vite, températures élevées.","Nettoyer à la bombe d'air, ventilateur bloqué pendant le soufflage."],
   ["m","Processus gourmand en arrière-plan","Processeur à 100 % au repos (Gestionnaire des tâches).","Identifier et arrêter le processus, scanner contre les logiciels malveillants."],
@@ -72,6 +77,7 @@ Object.assign(SYMPTOM_PARTS, {
  "pc|Périphérique USB non reconnu":[["io",3],["front",2],["chipset",2]],
  "pc|Écran qui scintille ou lignes":[["display",3],["pcie",2]],
  "pc|Ventilateur très bruyant":[["cooling",3]],
+ "pc|Disque dur externe non reconnu":[["io",3],["front",2]],
  "android|Lignes ou couleurs anormales à l'écran":[["dispconn",3],["soc",1]],
  "android|Charge très lente":[["port",3],["chargeic",2],["battery",2]],
  "android|Applis qui plantent ou se ferment":[["ufs",2]],

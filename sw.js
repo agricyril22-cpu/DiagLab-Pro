@@ -1,8 +1,8 @@
 /* DiagLab Pro — service worker : application disponible hors connexion */
-const VERSION = "diaglab-2.4.0";
+const VERSION = "diaglab-2.5.0";
 const CORE = [
   "./", "./index.html", "./style.css", "./data.js", "./data-plus.js", "./data-faults.js", "./app.js", "./board.js", "./tests.js", "./phone.js", "./ia.js", "./iso.js",
-  "./rescue.js", "./drivers.js", "./brands.js", "./academy.js", "./academy-data.js", "./academy-net.js", "./academy-figs.js", "./outils/DiagLab-Cle-Secours.zip",
+  "./rescue.js", "./drivers.js", "./brands.js", "./disques.js", "./academy.js", "./academy-data.js", "./academy-net.js", "./academy-figs.js", "./outils/DiagLab-Cle-Secours.zip",
   "./vendor/anthropic-sdk-1.3.0.js", "./manifest.webmanifest",
   "./icons/favicon.svg", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png", "./icons/apple-touch-icon.png",
   "./outils/DiagLab-Rapport.ps1", "./outils/Lancer-DiagLab.bat", "./outils/DiagLab-Rapport.zip"

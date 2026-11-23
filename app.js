@@ -4,7 +4,7 @@
 const DESKTOP = !!(window.diaglab && window.diaglab.desktop);   // application Windows (.exe)
 const PWA = !!window.DL_PWA && !DESKTOP;                          // site installé ou installable
 const FULL = PWA || DESKTOP;                                       // impression, export, téléchargements
-const VERSION = "2.4.0";
+const VERSION = "2.5.0";
 const RELEASES = "https://github.com/agricyril22-cpu/DiagLab-Pro/releases/latest";
 
 /* ---------- utilitaires ---------- */
@@ -70,7 +70,7 @@ const VIEWS = [
  ["diag","Diagnostic guidé","Diagnostic"],["phone","Diagnostic téléphone","Diagnostic"],["tests","Tests de l'appareil","Diagnostic"],
  ["rapport","Rapport PC","Diagnostic"],["ia","Assistant IA","Diagnostic"],
  ["academie","Académie","Formation"],["cours","Cours","Formation",1],
- ["rescue","Clé de secours","Outils PC"],["drivers","Pilotes","Outils PC"],
+ ["rescue","Clé de secours","Outils PC"],["drivers","Pilotes","Outils PC"],["disques","Disques","Outils PC"],
  ["marques","Pannes par marque","Ressources"],["faq","Pannes & FAQ","Ressources"],["reset","Réinitialisation","Ressources"],["iso","Systèmes & ISO","Ressources"],
  ["boot","Outils de boot","Ressources"],["outils","Logiciels","Ressources"],["cmd","Commandes","Ressources"],
  ["calc","Calculateurs","Ressources"],["bios","BIOS & accès","Ressources"],

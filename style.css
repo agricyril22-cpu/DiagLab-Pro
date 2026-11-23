@@ -314,6 +314,29 @@ fieldset.qq.good .qopt.right,fieldset.qq.bad .qopt.right{background:var(--ok-bg)
 .cert-name{font-family:var(--f-display);font-size:28px;font-weight:700}
 .cert-track{font-size:20px;font-weight:600;color:var(--accent)}
 
+/* Disques */
+.dcard{margin-bottom:16px;border-left-width:4px}
+.dcard.lv-critique{border-left-color:var(--crit)} .dcard.lv-attention{border-left-color:var(--warn)} .dcard.lv-ok{border-left-color:var(--ok)}
+.dhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.dhead>div:first-child{min-width:0}
+.dpills{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pill.usb{border-color:var(--accent);color:var(--accent);font-weight:600}
+dl.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin:12px 0}
+dl.metrics>div{background:var(--panel2);border-radius:8px;padding:8px 10px}
+dl.metrics dt{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+dl.metrics dd{margin:2px 0 0;font-weight:600;font-variant-numeric:tabular-nums}
+table.vols{margin-top:12px}
+table.vols td{vertical-align:middle}
+.vbar{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden;min-width:120px;margin-bottom:3px}
+.vbar i{display:block;height:100%;background:var(--accent)}
+td.vact{display:flex;flex-wrap:wrap;gap:6px}
+.inl{margin-top:12px;border-color:var(--warn)}
+.inl h4{margin:0 0 8px}
+table.t tr.bad td{color:var(--crit);font-weight:600}
+.progress i.indet{animation:indet 1.4s ease-in-out infinite;width:40%!important}
+@keyframes indet{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+@media (prefers-reduced-motion:reduce){.progress i.indet{animation:none}}
+
 /* Formulaire de fiche */
 .form{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:12px 16px}
 .field{display:flex;flex-direction:column;gap:4px;min-width:0}

@@ -101,6 +101,23 @@ ACADEMY.push({id:"pc", title:"Maintenance informatique", desc:"Architecture, él
    ["Quelle règle de sauvegarde recommande-t-on ?",["1-1-1","3-2-1","2-2-2"],1,"3 copies, sur 2 supports différents, dont 1 hors site."],
    ["Que faire d'une batterie de portable gonflée ?",["La percer pour la dégonfler","La retirer avec précaution et la stocker dans un bac ignifuge","La laisser en place"],1,"Elle peut s'enflammer : retrait immédiat, stockage sûr, recyclage."]]},
 
+ {id:"pc7", title:"Disques durs et SSD : diagnostic et récupération", min:30, body:[
+  ["p","Le disque est la seule pièce qui contient l'irremplaçable : les données du client. Règle d'or : **en cas de doute, copier d'abord, réparer ensuite**."],
+  ["fig","m2"],
+  ["h","Lire la santé d'un disque"],
+  ["p","Le **SMART** est le carnet de santé du disque. Les compteurs qui comptent : **5** (secteurs réalloués), **197** (secteurs en attente), **198** (non corrigibles), **199** (erreurs CRC : câble ou boîtier). Sur un SSD NVMe : pourcentage d'usure, réserve disponible, erreurs de support."],
+  ["table",["Constat","Gravité","Action"],[["197 ou 198 supérieur à 0","Critique","Copier les données immédiatement, sans CHKDSK /r avant"],["5 qui augmente","Élevée","Sauvegarder, prévoir le remplacement"],["199 qui augmente","Câblage","Changer de câble, de port ou de boîtier"],["SMART en échec","Critique","Copier puis remplacer"]]],
+  ["h","Les tests dans l'ordre"],
+  ["ol",["Analyse (santé Windows, SMART, volumes) : aucun risque.","Test de surface **rapide** en lecture : quelques minutes, repère les zones lentes.","Copie des données si le disque est suspect.","Test complet et CHKDSK /f ou /r seulement ensuite."]],
+  ["h","Disques externes"],
+  ["p","Un boîtier USB ajoute un **pont USB-SATA** qui peut tomber en panne seul, et qui ne transmet pas toujours le SMART (smartmontools en lit la plupart). Certains disques sont **chiffrés par leur boîtier** : sortis du boîtier, ils paraissent vides."],
+  ["warn","Un disque qui clique ou grince : le débrancher. Chaque essai peut rayer les plateaux. Les données importantes relèvent d'un laboratoire en salle blanche."],
+  ["tool","link:disques:Outils PC → Disques"]],
+  quiz:[
+   ["L'attribut 197 (secteurs en attente) vaut 12. Première action ?",["CHKDSK /r","Copier les données","Formater"],1,"Un disque qui se dégrade peut lâcher pendant une réparation : on sauve d'abord les données."],
+   ["Les erreurs CRC (199) augmentent. Cause la plus probable ?",["Plateaux rayés","Câble, port ou boîtier USB","Virus"],1,"Ce sont des erreurs de transmission entre le disque et le contrôleur."],
+   ["Un disque externe WD sorti de son boîtier paraît RAW. Pourquoi ?",["Il est mort","Les données sont chiffrées par le boîtier","Il faut le formater"],1,"Le pont du boîtier chiffre les données : il faut un pont identique."],
+   ["Que faire d'un disque qui émet des clics ?",["Lancer un test de surface complet","Le débrancher et orienter vers un laboratoire si les données comptent","Le congeler"],1,"Chaque mise sous tension peut aggraver la panne mécanique."]]},
  {id:"pc6", title:"Nouvelles technologies (2025–2026)", min:35, body:[
   ["p","Le matériel évolue vite. Ce module résume les plateformes récentes et ce qu'elles changent pour le technicien. Vérifiez toujours la fiche technique du constructeur pour un modèle précis."],
   ["h","Intel"],

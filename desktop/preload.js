@@ -21,5 +21,19 @@ contextBridge.exposeInMainWorld("diaglab", {
     exportTo: () => ipcRenderer.invoke("drv:export"),
     windowsUpdate: () => ipcRenderer.invoke("drv:update")
   },
+  disks: {
+    analyse: () => ipcRenderer.invoke("disk:analyse"),
+    surface: (disk, mode) => ipcRenderer.invoke("disk:surface", { disk: Number(disk), mode: mode === "full" ? "full" : "quick" }),
+    cancel: () => ipcRenderer.invoke("disk:cancel"),
+    chkdsk: (letter, fix, surface) => ipcRenderer.invoke("disk:chkdsk", { letter: String(letter), fix: !!fix, surface: !!surface }),
+    speed: (letter) => ipcRenderer.invoke("disk:speed", { letter: String(letter) }),
+    fixDisk: (disk, what) => ipcRenderer.invoke("disk:fixdisk", { disk: Number(disk), what: what === "readonly" ? "readonly" : "online" }),
+    letter: (disk, partition) => ipcRenderer.invoke("disk:letter", { disk: Number(disk), partition: Number(partition) }),
+    format: (letter, fs, label) => ipcRenderer.invoke("disk:format", { letter: String(letter), fs: String(fs), label: String(label || "") }),
+    eject: (letter) => ipcRenderer.invoke("disk:eject", { letter: String(letter) }),
+    copy: (letter) => ipcRenderer.invoke("disk:copy", { letter: String(letter) }),
+    manager: () => ipcRenderer.invoke("disk:mgmt"),
+    onProgress: (cb) => { const h = (_e, d) => cb(d); ipcRenderer.on("disk:progress", h); return () => ipcRenderer.removeListener("disk:progress", h); }
+  },
   onProgress: (cb) => { const h = (_e, d) => cb(d); ipcRenderer.on("dl:progress", h); return () => ipcRenderer.removeListener("dl:progress", h); }
 });
